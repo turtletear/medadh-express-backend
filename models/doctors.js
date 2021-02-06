@@ -1,37 +1,43 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-
-mongoose.set('useFindAndModify', false)
-
-const doctorSchema = new Schema ({
+//deprecating warning
+mongoose.set("useNewUrlParser", true);
+mongoose.set("useFindAndModify", false);
+mongoose.set("useCreateIndex", true);
+const doctorSchema = new Schema(
+  {
     username: {
-        type: String,
-        required: true,
-        unique: true
+      type: String,
+      required: true,
+      unique: true,
     },
     name: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     email: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     password: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     phone: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
-    patients: [{
+    patients: [
+      {
         type: Schema.Types.ObjectId,
-        ref: 'Patients'
-    }]
-}, {
-    timestamps: true
-})
+        ref: "Patients",
+      },
+    ],
+  },
+  {
+    timestamps: true,
+  }
+);
 
-const Doctors = mongoose.model('Doctors', patientSchema)
-module.exports = Doctors
+const Doctors = mongoose.model("Doctors", doctorSchema);
+module.exports = Doctors;

@@ -1,24 +1,24 @@
-const Patients = require("../models/patients");
+const Doctors = require("../models/doctors");
 const { result_controller } = require("../middleware");
 
-const getAllPatients = async () => {
+const getAllDoctors = async () => {
   try {
-    const patientsList = await Patients.find({});
-    return result_controller("OK", patientsList);
+    const doctorList = await Doctors.find({});
+    return result_controller("OK", doctorList);
   } catch (error) {
-    console.error(error);
+    console.error();
     return result_controller("ERROR", null);
   }
 };
 
-const getPatientByUsername = async (username) => {
+const getDoctorByUsername = async (username) => {
   try {
-    const patientData = await Patients.find({ username: username }).exec();
-    if (patientData.length) {
+    const doctorData = await Doctors.find({ username: username }).exec();
+    if (doctorData.length) {
       //if data found
-      return result_controller("OK", patientData);
+      return result_controller("OK", doctorData);
     } else {
-      return result_controller("ERROR data not found!", patientData);
+      return result_controller("ERROR data not found!", doctorData);
     }
   } catch (error) {
     console.error(error);
@@ -26,14 +26,14 @@ const getPatientByUsername = async (username) => {
   }
 };
 
-const getPatientById = async (id) => {
+const getDoctorById = async (id) => {
   try {
-    const patientData = await Patients.findById(id).exec();
-    if (patientData) {
+    const doctorData = await Doctors.findById(id).exec();
+    if (doctorData) {
       //if data found
-      return result_controller("OK", patientData);
+      return result_controller("OK", doctorData);
     } else {
-      return result_controller("ERROR Data not found", patientData);
+      return result_controller("ERROR data not found!", doctorData);
     }
   } catch (error) {
     console.error(error);
@@ -41,10 +41,10 @@ const getPatientById = async (id) => {
   }
 };
 
-const createPatient = async (newData) => {
+const createDoctor = async (newData) => {
   try {
-    const patientNewData = await Patients.create(newData);
-    return result_controller("OK", patientNewData);
+    const doctorData = await Doctors.create(newData);
+    return result_controller("OK", doctorData);
   } catch (error) {
     console.error(error);
     if (error.name === "MongoError" && error.code === 11000) {
@@ -54,15 +54,14 @@ const createPatient = async (newData) => {
   }
 };
 
-const updatePatientById = async (id, updated) => {
+const updateDoctorById = async (id, updated) => {
   try {
-    const updatedData = await Patients.findByIdAndUpdate(
+    const updatedData = await Doctors.findByIdAndUpdate(
       id,
       { $set: updated },
       { new: true }
     ).exec();
     if (updatedData) {
-      //if data found
       return result_controller("OK", updatedData);
     } else {
       return result_controller("ERROR Data not found", updatedData);
@@ -73,9 +72,9 @@ const updatePatientById = async (id, updated) => {
   }
 };
 
-const deletePatientById = async (id) => {
+const deleteDoctorById = async (id) => {
   try {
-    const deletedData = await Patients.findByIdAndRemove(id).exec();
+    const deletedData = await Doctors.findByIdAndRemove(id).exec();
     if (deletedData) {
       return result_controller("OK", deletedData);
     } else {
@@ -86,11 +85,12 @@ const deletePatientById = async (id) => {
     return result_controller("ERROR", null);
   }
 };
+
 module.exports = {
-  getAllPatients,
-  createPatient,
-  getPatientByUsername,
-  getPatientById,
-  updatePatientById,
-  deletePatientById,
+  getAllDoctors,
+  createDoctor,
+  getDoctorByUsername,
+  getDoctorById,
+  updateDoctorById,
+  deleteDoctorById,
 };

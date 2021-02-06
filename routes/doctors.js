@@ -3,33 +3,32 @@ const { route } = require(".");
 const router = express.Router();
 
 const {
-  getAllPatients,
-  createPatient,
-  getPatientByUsername,
-  getPatientById,
-  updatePatientById,
-  deletePatientById,
-} = require("../controllers/patients");
+  getAllDoctors,
+  createDoctor,
+  getDoctorByUsername,
+  getDoctorById,
+  updateDoctorById,
+  deleteDoctorById,
+} = require("../controllers/doctors");
 
 const { response_generator } = require("../middleware");
 //get method
 router.get("/", async (req, res) => {
-  const data = await getAllPatients();
+  const data = await getAllDoctors();
   const stat = data.status == "OK" ? 200 : 500;
   return response_generator(stat, data, res);
 });
 
 router.get("/username/:username", async (req, res) => {
   let username = req.params.username;
-  const data = await getPatientByUsername(username);
+  const data = await getDoctorByUsername(username);
   const stat = data.status == "OK" ? 200 : 500;
   return response_generator(stat, data, res);
 });
 
-router.get("/:patientId", async (req, res) => {
-  let patientId = req.params.patientId;
-  //console.log(id)
-  const data = await getPatientById(patientId);
+router.get("/:doctorId", async (req, res) => {
+  let doctorId = req.params.doctorId;
+  const data = await getDoctorById(doctorId);
   const stat = data.status == "OK" ? 200 : 500;
   return response_generator(stat, data, res);
 });
@@ -37,30 +36,31 @@ router.get("/:patientId", async (req, res) => {
 //post method
 router.post("/", async (req, res) => {
   const newData = req.body;
-  const data = await createPatient(newData);
+  const data = await createDoctor(newData);
   const stat = data.status == "OK" ? 200 : 500;
 
   return response_generator(stat, data, res);
 });
 
 //put method
-router.put("/:patientId", async (req, res) => {
+router.put("/:doctorId", async (req, res) => {
   let updatedData = req.body;
-  let patientId = req.params.patientId;
+  let doctorId = req.params.doctorId;
 
-  const data = await updatePatientById(patientId, updatedData);
+  const data = await updateDoctorById(doctorId, updatedData);
   const stat = data.status == "OK" ? 200 : 500;
 
   return response_generator(stat, data, res);
 });
 
 //delete method
-router.delete("/:patientId", async (req, res) => {
-  let patientId = req.params.patientId;
+router.delete("/:doctorId", async (req, res) => {
+  let doctorId = req.params.doctorId;
 
-  const data = await deletePatientById(patientId);
+  const data = await deleteDoctorById(doctorId);
   const stat = data.status == "OK" ? 200 : 500;
 
   return response_generator(stat, data, res);
 });
+
 module.exports = router;
