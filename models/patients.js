@@ -27,10 +27,16 @@ const patientSchema = new Schema(
       type: String,
       required: true,
     },
-    doctor: {
-      type: Schema.Types.ObjectId,
-      ref: "Doctors",
+    userImage: {
+      type: String,
+      default: "default.png",
     },
+    doctors: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Doctors",
+      },
+    ],
   },
   {
     timestamps: true,

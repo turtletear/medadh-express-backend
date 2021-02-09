@@ -1,6 +1,9 @@
+const bodyParser = require("body-parser");
 const express = require("express");
 const { route } = require(".");
 const router = express.Router();
+
+router.use(bodyParser.json());
 
 const {
   getAllPatients,
@@ -9,6 +12,8 @@ const {
   getPatientById,
   updatePatientById,
   deletePatientById,
+  addDoctorsRequest,
+  cancelAddDoctorsRequest,
 } = require("../controllers/patients");
 
 const { response_generator } = require("../middleware");
@@ -43,12 +48,30 @@ router.post("/", async (req, res) => {
   return response_generator(stat, data, res);
 });
 
+router.post("/doctorreq/:patientId/:doctorId", async (req, res) => {
+  const patientId = req.params.patientId;
+  const doctorId = req.params.doctorId;
+  const data = await addDoctorsRequest(patientId, doctorId);
+  const stat = data.status == "OK" ? 200 : 500;
+
+  return response_generator(stat, data, res);
+});
+
 //put method
 router.put("/:patientId", async (req, res) => {
   let updatedData = req.body;
   let patientId = req.params.patientId;
 
   const data = await updatePatientById(patientId, updatedData);
+  const stat = data.status == "OK" ? 200 : 500;
+
+  return response_generator(stat, data, res);
+});
+
+router.put("/canceldoctorreq/:patientId/:doctorId", async (req, res) => {
+  const patientId = req.params.patientId;
+  const doctorId = req.params.doctorId;
+  const data = await cancelAddDoctorsRequest(patientId, doctorId);
   const stat = data.status == "OK" ? 200 : 500;
 
   return response_generator(stat, data, res);

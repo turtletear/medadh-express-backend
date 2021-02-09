@@ -18,7 +18,7 @@ const getDoctorByUsername = async (username) => {
       //if data found
       return result_controller("OK", doctorData);
     } else {
-      return result_controller("ERROR data not found!", doctorData);
+      return result_controller("ERROR data not found!", null);
     }
   } catch (error) {
     console.error(error);
@@ -33,7 +33,7 @@ const getDoctorById = async (id) => {
       //if data found
       return result_controller("OK", doctorData);
     } else {
-      return result_controller("ERROR data not found!", doctorData);
+      return result_controller("ERROR data not found!", null);
     }
   } catch (error) {
     console.error(error);
@@ -64,7 +64,7 @@ const updateDoctorById = async (id, updated) => {
     if (updatedData) {
       return result_controller("OK", updatedData);
     } else {
-      return result_controller("ERROR Data not found", updatedData);
+      return result_controller("ERROR Data not found", null);
     }
   } catch (error) {
     console.error(error);
@@ -78,7 +78,7 @@ const deleteDoctorById = async (id) => {
     if (deletedData) {
       return result_controller("OK", deletedData);
     } else {
-      return result_controller("ERROR Data not found", deletedData);
+      return result_controller("ERROR Data not found", null);
     }
   } catch (error) {
     console.error(error);
