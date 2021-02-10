@@ -14,6 +14,11 @@ const {
   deleteDoctorById,
 } = require("../controllers/doctors");
 
+const {
+  confirmRequest,
+  unBoundDoctorFromPatient,
+} = require("../controllers/mergeDoctorPatient");
+
 const { response_generator } = require("../middleware");
 //get method
 router.get("/", async (req, res) => {
@@ -45,12 +50,32 @@ router.post("/", async (req, res) => {
   return response_generator(stat, data, res);
 });
 
+router.post("/confirmPatient/:doctorId/:patientId", async (req, res) => {
+  const doctorId = req.params.doctorId;
+  const patientId = req.params.patientId;
+
+  const data = await confirmRequest(doctorId, patientId);
+  const stat = data.status == "OK" ? 200 : 500;
+
+  return response_generator(stat, data, res);
+});
+
 //put method
 router.put("/:doctorId", async (req, res) => {
   let updatedData = req.body;
   let doctorId = req.params.doctorId;
 
   const data = await updateDoctorById(doctorId, updatedData);
+  const stat = data.status == "OK" ? 200 : 500;
+
+  return response_generator(stat, data, res);
+});
+
+router.put("/removePatient/:doctorId/:patientId", async (req, res) => {
+  const doctorId = req.params.doctorId;
+  const patientId = req.params.patientId;
+
+  const data = await unBoundDoctorFromPatient(doctorId, patientId);
   const stat = data.status == "OK" ? 200 : 500;
 
   return response_generator(stat, data, res);

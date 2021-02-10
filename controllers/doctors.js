@@ -1,4 +1,6 @@
+const Patients = require("../models/patients");
 const Doctors = require("../models/doctors");
+const Mongoose = require("mongoose");
 const { result_controller } = require("../middleware");
 
 const getAllDoctors = async () => {

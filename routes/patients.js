@@ -12,9 +12,13 @@ const {
   getPatientById,
   updatePatientById,
   deletePatientById,
+} = require("../controllers/patients");
+
+const {
   addDoctorsRequest,
   cancelAddDoctorsRequest,
-} = require("../controllers/patients");
+  getAllDoctorRequest,
+} = require("../controllers/mergeDoctorPatient");
 
 const { response_generator } = require("../middleware");
 //get method
@@ -36,6 +40,14 @@ router.get("/:patientId", async (req, res) => {
   //console.log(id)
   const data = await getPatientById(patientId);
   const stat = data.status == "OK" ? 200 : 500;
+  return response_generator(stat, data, res);
+});
+
+router.get("/getdoctorrequest/:patientId", async (req, res) => {
+  let patientId = req.params.patientId;
+  const data = await getAllDoctorRequest(patientId);
+  const stat = data.status == "OK" ? 200 : 500;
+
   return response_generator(stat, data, res);
 });
 

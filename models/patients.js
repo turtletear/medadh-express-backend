@@ -37,6 +37,12 @@ const patientSchema = new Schema(
         ref: "Doctors",
       },
     ],
+    requestSent: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Doctors",
+      },
+    ],
   },
   {
     timestamps: true,

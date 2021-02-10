@@ -3,8 +3,6 @@ const Doctors = require("../models/doctors");
 const Mongoose = require("mongoose");
 const { result_controller } = require("../middleware");
 
-const { getDoctorById } = require("./doctors");
-
 const getAllPatients = async () => {
   try {
     const patientsList = await Patients.find({});
@@ -91,79 +89,6 @@ const deletePatientById = async (id) => {
   }
 };
 
-const checkDoctorRequest = async (patientId, doctorId) => {
-  //check wether doctorId is already exist
-  try {
-    const data = await getPatientById(patientId);
-    let arr = data.data.doctors;
-    if (arr.includes(doctorId)) {
-      return true;
-    }
-    return false;
-  } catch (error) {
-    console.error(error);
-  }
-};
-
-const addDoctorsRequest = async (patientId, doctorId) => {
-  try {
-    // console.log("save requestSend in an array(on patient model)");
-    // console.log("save requestReceive in an array(on doctor model)");
-    const patientFound = await getPatientById(patientId);
-    const doctorFound = await getDoctorById(doctorId);
-    const isExist = await checkDoctorRequest(patientId, doctorId);
-
-    if (patientFound.data && doctorFound.data) {
-      if (!isExist) {
-        const objectId = Mongoose.Types.ObjectId(doctorId);
-        const requestSendData = await Patients.findByIdAndUpdate(
-          patientId,
-          { $push: { doctors: objectId } },
-          { new: true }
-        );
-
-        if (requestSendData) {
-          return result_controller("OK", requestSendData);
-        } else {
-          return result_controller("ERROR request failed", requestSendData);
-        } // end if
-      } else return result_controller("ERROR Id is already exist", null); //end if doctor already exist
-    } else return result_controller("ERROR Data not found", null); //end doctor and patient data is found
-  } catch (error) {
-    return result_controller("ERROR", null);
-    console.error(error);
-  }
-};
-
-const cancelAddDoctorsRequest = async (patientId, doctorId) => {
-  try {
-    // console.log("save requestSend in an array(on patient model)");
-    // console.log("save requestReceive in an array(on doctor model)");
-    const patientFound = await getPatientById(patientId);
-    const doctorFound = await getDoctorById(doctorId);
-    const isExist = await checkDoctorRequest(patientId, doctorId);
-
-    if (patientFound.data && doctorFound.data) {
-      if (isExist) {
-        const objectId = Mongoose.Types.ObjectId(doctorId);
-        const requestSendData = await Patients.findByIdAndUpdate(
-          patientId,
-          { $pull: { doctors: objectId } },
-          { new: true }
-        );
-
-        if (requestSendData) {
-          return result_controller("OK", requestSendData);
-        } else {
-          return result_controller("ERROR request failed", requestSendData);
-        } // end if
-      } else return result_controller("ERROR Id is not exist", null); //end if doctor already exist
-    } else return result_controller("ERROR Data not found", null); //end doctor and patient data is found
-  } catch (error) {
-    return result_controller("ERROR", null);
-    console.error(error);
-  }
-};
 module.exports = {
   getAllPatients,
   createPatient,
@@ -171,6 +96,4 @@ module.exports = {
   getPatientById,
   updatePatientById,
   deletePatientById,
-  addDoctorsRequest,
-  cancelAddDoctorsRequest,
 };

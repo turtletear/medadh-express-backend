@@ -33,6 +33,12 @@ const doctorSchema = new Schema(
         ref: "Patients",
       },
     ],
+    requestRecieved: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Patients",
+      },
+    ],
   },
   {
     timestamps: true,
