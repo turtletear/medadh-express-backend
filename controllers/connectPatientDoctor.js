@@ -133,7 +133,24 @@ const checkPatientRequest = async (doctorId, patientId) => {
     let arr = data.data.patients;
     let arr2 = data.data.requestRecieved;
     if (!arr.includes(patientId) && arr2.includes(patientId)) {
-      // patientId is not in array patient nor requestReceived
+      // patientId is not in array of patients and is in array of requestReceived
+      return true;
+    }
+    return false;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const checkPatientRequest2 = async (doctorId, patientId) => {
+  // for unBoundDoctorFromPatient
+  //check wether patientId is already exist in patient array on doctor object
+  try {
+    const data = await getDoctorById(doctorId);
+    let arr = data.data.patients;
+    let arr2 = data.data.requestRecieved;
+    if (arr.includes(patientId) && !arr2.includes(patientId)) {
+      // patientId is not in array of patients and is in array of requestReceived
       return true;
     }
     return false;
@@ -228,10 +245,11 @@ const unBoundDoctorFromPatient = async (doctorId, patientId) => {
   try {
     const patientFound = await getPatientById(patientId);
     const doctorFound = await getDoctorById(doctorId);
-    const isExist = await checkPatientRequest(doctorId, patientId);
+    const isExist = await checkPatientRequest2(doctorId, patientId);
 
     if (doctorFound.data && patientFound.data) {
-      if (!isExist) {
+      if (isExist) {
+        console.log(isExist);
         const [
           removePatientFromDoctor,
           removeDoctorFromPatient,

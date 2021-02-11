@@ -17,7 +17,7 @@ const {
 const {
   confirmRequest,
   unBoundDoctorFromPatient,
-} = require("../controllers/mergeDoctorPatient");
+} = require("../controllers/connectPatientDoctor");
 
 const { response_generator } = require("../middleware");
 //get method
