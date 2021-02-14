@@ -1,6 +1,9 @@
 const Patients = require("../models/patients");
 const Doctors = require("../models/doctors");
 const Mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
+const round = 10;
+const salt = bcrypt.genSaltSync(round);
 const { result_controller } = require("../middleware");
 
 const getAllPatients = async () => {
@@ -45,6 +48,9 @@ const getPatientById = async (id) => {
 
 const createPatient = async (newData) => {
   try {
+    let hashed = bcrypt.hashSync(newData.password, salt);
+    newData.password = hashed;
+
     const patientNewData = await Patients.create(newData);
     return result_controller("OK", patientNewData);
   } catch (error) {
@@ -58,6 +64,9 @@ const createPatient = async (newData) => {
 
 const updatePatientById = async (id, updated) => {
   try {
+    let hashed = bcrypt.hashSync(updated.password, salt);
+    updated.password = hashed;
+
     const updatedData = await Patients.findByIdAndUpdate(
       id,
       { $set: updated },
