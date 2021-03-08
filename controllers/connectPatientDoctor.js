@@ -1,5 +1,5 @@
-const Patients = require("../models/patients");
-const Doctors = require("../models/doctors");
+const Patients = require("../models/patientResource");
+const Doctors = require("../models/doctorResource");
 const Mongoose = require("mongoose");
 const { result_controller } = require("../middleware");
 const { getPatientById } = require("./patients");
@@ -10,7 +10,7 @@ const checkDoctorRequest = async (patientId, doctorId) => {
   //check wether doctorId is already exist in requestSend array
   try {
     const data = await getPatientById(patientId);
-    let arr = data.data.requestSent;
+    let arr = data.data.extension.requestSent;
     if (arr.includes(doctorId)) {
       return true;
     }
@@ -25,14 +25,14 @@ const removeRequestData = async (patientId, doctorId) => {
     const doctorObjectId = Mongoose.Types.ObjectId(doctorId);
     const requestSendData = await Patients.findByIdAndUpdate(
       patientId,
-      { $pull: { requestSent: doctorObjectId } },
+      { $pull: { "extension.requestSent": doctorObjectId } },
       { new: true }
     );
 
     const patientObjectId = Mongoose.Types.ObjectId(patientId);
     const requestRecievedData = await Doctors.findByIdAndUpdate(
       doctorId,
-      { $pull: { requestRecieved: patientObjectId } },
+      { $pull: { "extension.requestRecieved": patientObjectId } },
       { new: true }
     );
 
@@ -45,8 +45,6 @@ const removeRequestData = async (patientId, doctorId) => {
 
 const addDoctorsRequest = async (patientId, doctorId) => {
   try {
-    // console.log("save requestSent in an array(on patient model)");
-    // console.log("save requestReceive in an array(on doctor model)");
     const patientFound = await getPatientById(patientId);
     const doctorFound = await getDoctorById(doctorId);
     const isExist = await checkDoctorRequest(patientId, doctorId);
@@ -56,26 +54,26 @@ const addDoctorsRequest = async (patientId, doctorId) => {
         const doctorObjectId = Mongoose.Types.ObjectId(doctorId);
         const requestSendData = await Patients.findByIdAndUpdate(
           patientId,
-          { $push: { requestSent: doctorObjectId } },
+          { $push: { "extension.requestSent": doctorObjectId } },
           { new: true }
         );
 
         const patientObjectId = Mongoose.Types.ObjectId(patientId);
         const requestRecievedData = await Doctors.findByIdAndUpdate(
           doctorId,
-          { $push: { requestRecieved: patientObjectId } },
+          { $push: { "extension.requestRecieved": patientObjectId } },
           { new: true }
         );
         if (requestSendData && requestRecievedData) {
           return result_controller("OK", requestSendData);
         } else {
-          return result_controller("ERROR request failed", null);
+          return result_controller("ERROR, request failed", null);
         } // end if
-      } else return result_controller("ERROR Id is already exist", null); //end if doctor already exist
-    } else return result_controller("ERROR Data not found", null); //end doctor and patient data is found
+      } else return result_controller("ERROR, Id is already exist", null); //end if doctor already exist
+    } else return result_controller("ERROR, Data not found", null); //end doctor and patient data is found
   } catch (error) {
+    console.error(error.message);
     return result_controller("ERROR", null);
-    console.error(error);
   }
 };
 
@@ -104,25 +102,25 @@ const cancelAddDoctorsRequest = async (patientId, doctorId) => {
   }
 };
 
-const getAllDoctorRequest = async (patientId) => {
-  //get all request from a patient
-  try {
-    const requestList = await Patients.findById(patientId).populate({
-      path: "requestSent",
-      model: "Doctors",
-      select: "username",
-    });
+// const getAllDoctorRequest = async (patientId) => {
+//   //get all request from a patient
+//   try {
+//     const requestList = await Patients.findById(patientId).populate({
+//       path: "extension.requestSent",
+//       model: "Doctor",
+//       select: "username",
+//     });
 
-    return result_controller("OK", requestList);
-  } catch (error) {
-    return result_controller("ERROR", null);
-    console.error(error);
-  }
-};
+//     return result_controller("OK", requestList);
+//   } catch (error) {
+//     console.error(error.message);
+//     return result_controller("ERROR", null);
+//   }
+// };
 
-const getAllDoctors = async () => {
-  //code here
-};
+// const getAllDoctors = async () => {
+//   //code here
+// };
 
 //----------FUNCTIONS FOR DOCTOR----------
 
@@ -130,15 +128,15 @@ const checkPatientRequest = async (doctorId, patientId) => {
   //check wether patientId is already exist in patient array on doctor object
   try {
     const data = await getDoctorById(doctorId);
-    let arr = data.data.patients;
-    let arr2 = data.data.requestRecieved;
+    let arr = data.data.extension.patients;
+    let arr2 = data.data.extension.requestRecieved;
     if (!arr.includes(patientId) && arr2.includes(patientId)) {
       // patientId is not in array of patients and is in array of requestReceived
       return true;
     }
     return false;
   } catch (error) {
-    console.error(error);
+    console.error(error.message);
   }
 };
 
@@ -147,8 +145,8 @@ const checkPatientRequest2 = async (doctorId, patientId) => {
   //check wether patientId is already exist in patient array on doctor object
   try {
     const data = await getDoctorById(doctorId);
-    let arr = data.data.patients;
-    let arr2 = data.data.requestRecieved;
+    let arr = data.data.extension.patients;
+    let arr2 = data.data.extension.requestRecieved;
     if (arr.includes(patientId) && !arr2.includes(patientId)) {
       // patientId is not in array of patients and is in array of requestReceived
       return true;
@@ -164,14 +162,14 @@ const addDoctor = async (doctorId, patientId) => {
     const patientObjectId = Mongoose.Types.ObjectId(patientId);
     const addPatientToDoctor = await Doctors.findByIdAndUpdate(
       doctorId,
-      { $push: { patients: patientObjectId } },
+      { $push: { "extension.patients": patientObjectId } },
       { new: true }
     );
 
     const doctorObjectId = Mongoose.Types.ObjectId(doctorId);
     const addDoctorToPatient = await Patients.findByIdAndUpdate(
       patientId,
-      { $push: { doctors: doctorObjectId } },
+      { $push: { generalPractitioner: doctorObjectId } },
       { new: true }
     );
     return [addPatientToDoctor, addDoctorToPatient];
@@ -186,14 +184,14 @@ const removeDoctor = async (doctorId, patientId) => {
     const patientObjectId = Mongoose.Types.ObjectId(patientId);
     const removePatientFromDoctor = await Doctors.findByIdAndUpdate(
       doctorId,
-      { $pull: { patients: patientObjectId } },
+      { $pull: { "extension.patients": patientObjectId } },
       { new: true }
     );
 
     const doctorObjectId = Mongoose.Types.ObjectId(doctorId);
     const removeDoctorFromPatient = await Patients.findByIdAndUpdate(
       patientId,
-      { $pull: { doctors: doctorObjectId } },
+      { $pull: { generalPractitioner: doctorObjectId } },
       { new: true }
     );
     return [removePatientFromDoctor, removeDoctorFromPatient];
@@ -277,8 +275,8 @@ const unBoundDoctorFromPatient = async (doctorId, patientId) => {
 module.exports = {
   addDoctorsRequest,
   cancelAddDoctorsRequest,
-  getAllDoctorRequest,
-  getAllDoctors,
+  // getAllDoctorRequest,
+  // getAllDoctors,
   confirmRequest,
   unBoundDoctorFromPatient,
 };

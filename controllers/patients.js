@@ -1,14 +1,28 @@
-const Patients = require("../models/patients");
-const Doctors = require("../models/doctors");
+const Patient = require("../models/patientResource");
+const Doctors = require("../models/doctorResource");
 const Mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const round = 10;
 const salt = bcrypt.genSaltSync(round);
 const { result_controller } = require("../middleware");
 
+const isExist = async (uname) => {
+  try {
+    let found = await Patient.find({
+      "extension.username": uname,
+    }).exec();
+    if (found.length) {
+      return true;
+    } else return false;
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
+};
+
 const getAllPatients = async () => {
   try {
-    const patientsList = await Patients.find({});
+    const patientsList = await Patient.find({});
     return result_controller("OK", patientsList);
   } catch (error) {
     console.error(error);
@@ -16,9 +30,11 @@ const getAllPatients = async () => {
   }
 };
 
-const getPatientByUsername = async (username) => {
+const getPatientByUsername = async (usernameQuery) => {
   try {
-    const patientData = await Patients.find({ username: username }).exec();
+    const patientData = await Patient.find({
+      "extension.username": usernameQuery,
+    }).exec();
     if (patientData.length) {
       //if data found
       return result_controller("OK", patientData);
@@ -33,7 +49,7 @@ const getPatientByUsername = async (username) => {
 
 const getPatientById = async (id) => {
   try {
-    const patientData = await Patients.findById(id).exec();
+    const patientData = await Patient.findById(id).exec();
     if (patientData) {
       //if data found
       return result_controller("OK", patientData);
@@ -48,26 +64,29 @@ const getPatientById = async (id) => {
 
 const createPatient = async (newData) => {
   try {
-    let hashed = bcrypt.hashSync(newData.password, salt);
-    newData.password = hashed;
+    let uname = newData.extension.username;
+    let found = await isExist(uname);
+    if (!found) {
+      let hashed = bcrypt.hashSync(newData.extension.password, salt);
+      newData.extension.password = hashed;
+      const patientNewData = await Patient.create(newData);
 
-    const patientNewData = await Patients.create(newData);
-    return result_controller("OK", patientNewData);
-  } catch (error) {
-    console.error(error);
-    if (error.name === "MongoError" && error.code === 11000) {
+      return result_controller("OK", patientNewData);
+    } else {
       return result_controller("ERROR, Duplicate username", null);
     }
+  } catch (error) {
+    console.error(error);
     return result_controller("ERROR", null);
   }
 };
 
 const updatePatientById = async (id, updated) => {
   try {
-    let hashed = bcrypt.hashSync(updated.password, salt);
-    updated.password = hashed;
+    let hashed = bcrypt.hashSync(updated.extension.password, salt);
+    updated.extension.password = hashed;
 
-    const updatedData = await Patients.findByIdAndUpdate(
+    const updatedData = await Patient.findByIdAndUpdate(
       id,
       { $set: updated },
       { new: true }
@@ -86,7 +105,7 @@ const updatePatientById = async (id, updated) => {
 
 const deletePatientById = async (id) => {
   try {
-    const deletedData = await Patients.findByIdAndRemove(id).exec();
+    const deletedData = await Patient.findByIdAndRemove(id).exec();
     if (deletedData) {
       return result_controller("OK", deletedData);
     } else {

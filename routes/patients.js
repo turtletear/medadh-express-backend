@@ -17,7 +17,7 @@ const {
 const {
   addDoctorsRequest,
   cancelAddDoctorsRequest,
-  getAllDoctorRequest,
+  // getAllDoctorRequest,
 } = require("../controllers/connectPatientDoctor");
 
 const { response_generator } = require("../middleware");
@@ -43,13 +43,13 @@ router.get("/:patientId", async (req, res) => {
   return response_generator(stat, data, res);
 });
 
-router.get("/getdoctorrequest/:patientId", async (req, res) => {
-  let patientId = req.params.patientId;
-  const data = await getAllDoctorRequest(patientId);
-  const stat = data.status == "OK" ? 200 : 500;
+// router.get("/getdoctorrequest/:patientId", async (req, res) => {
+//   let patientId = req.params.patientId;
+//   const data = await getAllDoctorRequest(patientId);
+//   const stat = data.status == "OK" ? 200 : 500;
 
-  return response_generator(stat, data, res);
-});
+//   return response_generator(stat, data, res);
+// });
 
 //post method
 router.post("/", async (req, res) => {
