@@ -62,6 +62,18 @@ const patientSchema = new Schema(
           ref: "Doctors",
         },
       ],
+      diagnosticReport: [
+        {
+          type: Schema.Types.ObjectId,
+          ref: "DiagnosticReport",
+        },
+      ],
+      medicationStatment: [
+        {
+          type: Schema.Types.ObjectId,
+          ref: "MedicationStatement",
+        },
+      ],
     },
   },
   {
@@ -69,5 +81,5 @@ const patientSchema = new Schema(
   }
 );
 
-const Patient = mongoose.model("Patient", patientSchema);
-module.exports = Patient;
+const Patients = mongoose.model("Patients", patientSchema);
+module.exports = Patients;

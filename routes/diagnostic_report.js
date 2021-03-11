@@ -11,7 +11,7 @@ const {
   createReport,
   updateReportById,
   deleteReportById,
-} = require("../controllers/medical_reports");
+} = require("../controllers/diagnostic_report");
 
 const { response_generator } = require("../middleware");
 //get method
@@ -51,10 +51,11 @@ router.put("/:reportId", async (req, res) => {
 });
 
 //delete method
-router.delete("/:reportId", async (req, res) => {
+router.delete("/:reportId/:patientId", async (req, res) => {
   let reportId = req.params.reportId;
+  let patientId = req.params.patientId;
 
-  const data = await deleteReportById(reportId);
+  const data = await deleteReportById(patientId, reportId);
   const stat = data.status == "OK" ? 200 : 500;
 
   return response_generator(stat, data, res);
