@@ -7,14 +7,18 @@ var logger = require("morgan");
 var app = express();
 
 var indexRouter = require("./routes/index");
-var usersRouter = require("./routes/users");
 var patientsRouter = require("./routes/patients");
 var doctorsRouter = require("./routes/doctors");
 var reportRouter = require("./routes/diagnostic_report");
 var medicationState = require("./routes/medication_statement");
+var authRouter = require("./routes/auth");
+
 //config
 const config = require("./config");
 const mongoose = require("mongoose");
+
+// Auth middleware
+var { patientJWTAuth, doctorJWTAuth } = require("./middleware/auth");
 
 //database setup
 var uri = `${config.MONGO_URI}/${config.DB_NAME}`; //local dbase
@@ -43,13 +47,13 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
-//routes
+//middleware - routes
 app.use("/", indexRouter);
-app.use("/users", usersRouter);
-app.use("/patients", patientsRouter);
-app.use("/doctors", doctorsRouter);
+app.use("/patients", patientJWTAuth, patientsRouter);
+app.use("/doctors", doctorJWTAuth, doctorsRouter);
 app.use("/reports", reportRouter);
 app.use("/medicationState", medicationState);
+app.use("/auth", authRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
