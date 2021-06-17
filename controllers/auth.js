@@ -54,7 +54,7 @@ const loginPatient = async (username, password) => {
           ...login,
           token: token,
         };
-        return result_controller("OK", authData);
+        return authData;
       } else {
         return result_controller("UNAUTHORIZED", null);
       }
@@ -68,8 +68,8 @@ const loginPatient = async (username, password) => {
 // DOCTOR AUTH
 const signupDoctor = async (newData) => {
   try {
-    const patient = await createPatient(newData);
-    return patient;
+    const doctor = await createDoctor(newData);
+    return doctor;
   } catch (error) {
     console.error(error);
     return result_controller("ERROR", null);
@@ -99,7 +99,7 @@ const loginDoctor = async (username, password) => {
           ...login,
           token: token,
         };
-        return result_controller("OK", authData);
+        return authData;
       } else {
         return result_controller("UNAUTHORIZED", null);
       }

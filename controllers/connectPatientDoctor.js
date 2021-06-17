@@ -102,26 +102,6 @@ const cancelAddDoctorsRequest = async (patientId, doctorId) => {
   }
 };
 
-// const getAllDoctorRequest = async (patientId) => {
-//   //get all request from a patient
-//   try {
-//     const requestList = await Patients.findById(patientId).populate({
-//       path: "extension.requestSent",
-//       model: "Doctor",
-//       select: "username",
-//     });
-
-//     return result_controller("OK", requestList);
-//   } catch (error) {
-//     console.error(error.message);
-//     return result_controller("ERROR", null);
-//   }
-// };
-
-// const getAllDoctors = async () => {
-//   //code here
-// };
-
 //----------FUNCTIONS FOR DOCTOR----------
 
 const checkPatientRequest = async (doctorId, patientId) => {
@@ -247,11 +227,8 @@ const unBoundDoctorFromPatient = async (doctorId, patientId) => {
 
     if (doctorFound.data && patientFound.data) {
       if (isExist) {
-        console.log(isExist);
-        const [
-          removePatientFromDoctor,
-          removeDoctorFromPatient,
-        ] = await removeDoctor(doctorId, patientId);
+        const [removePatientFromDoctor, removeDoctorFromPatient] =
+          await removeDoctor(doctorId, patientId);
         if (removePatientFromDoctor && removeDoctorFromPatient) {
           return result_controller("OK", removePatientFromDoctor);
         } else {
@@ -275,8 +252,6 @@ const unBoundDoctorFromPatient = async (doctorId, patientId) => {
 module.exports = {
   addDoctorsRequest,
   cancelAddDoctorsRequest,
-  // getAllDoctorRequest,
-  // getAllDoctors,
   confirmRequest,
   unBoundDoctorFromPatient,
 };

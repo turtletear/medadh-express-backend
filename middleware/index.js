@@ -1,4 +1,5 @@
 const response_generator = (statusCode, result, res) => {
+  //tambah percabangan error code
   res.statusCode = statusCode;
   res.json(result);
 };

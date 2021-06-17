@@ -43,22 +43,14 @@ router.get("/:patientId", async (req, res) => {
   return response_generator(stat, data, res);
 });
 
-// router.get("/getdoctorrequest/:patientId", async (req, res) => {
-//   let patientId = req.params.patientId;
-//   const data = await getAllDoctorRequest(patientId);
+//post method
+// router.post("/", async (req, res) => {
+//   const newData = req.body;
+//   const data = await createPatient(newData);
 //   const stat = data.status == "OK" ? 200 : 500;
 
 //   return response_generator(stat, data, res);
 // });
-
-//post method
-router.post("/", async (req, res) => {
-  const newData = req.body;
-  const data = await createPatient(newData);
-  const stat = data.status == "OK" ? 200 : 500;
-
-  return response_generator(stat, data, res);
-});
 
 router.post("/doctorreq/:patientId/:doctorId", async (req, res) => {
   const patientId = req.params.patientId;

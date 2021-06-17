@@ -1,8 +1,9 @@
 const medState = require("../models/MedicationStatement");
 const Patients = require("../models/patientResource");
 const Mongoose = require("mongoose");
-
 const { result_controller } = require("../middleware");
+
+const { getPatientById } = require("./patients");
 
 const getAllMedState = async () => {
   try {
@@ -46,12 +47,20 @@ const updatePatientMedState = async (patientId, medStateId) => {
 
 const createMedState = async (newData) => {
   try {
-    const result = await medState.create(newData);
-    //update patient resource
     let patientId = newData.subject;
-    let medStateId = result.id;
-    const updatePatient = await updatePatientMedState(patientId, medStateId);
-    return result_controller("OK", result);
+    let patientObjectId = Mongoose.Types.ObjectId(patientId);
+    newData.subject = patientObjectId;
+    let checkPatient = await getPatientById(patientId);
+
+    if (checkPatient.data != null) {
+      const result = await medState.create(newData);
+      //update patient resource
+      let medStateId = result.id;
+      const updatePatient = await updatePatientMedState(patientId, medStateId);
+      return result_controller("OK", result);
+    } else {
+      return result_controller("ERROR Patient Id not found", null);
+    }
   } catch (error) {
     console.error(error);
     return result_controller("ERROR", null);
@@ -92,15 +101,20 @@ const removePatientMedState = async (patientId, medStateId) => {
 
 const deleteMedStateById = async (patientId, medStateId) => {
   try {
-    const result = await removePatientMedState(patientId, medStateId);
-    const deletedData = await medState.findByIdAndRemove(medStateId);
-    if (deletedData && result) {
-      return result_controller("OK", result);
+    let checkPatient = await getPatientById(patientId);
+    if (checkPatient.data != null) {
+      const deletedData = await medState.findByIdAndRemove(medStateId);
+      if (deletedData != null) {
+        const result = await removePatientMedState(patientId, medStateId);
+        return result_controller("OK", deletedData);
+      } else {
+        return result_controller(
+          "ERROR, medication state data not found",
+          null
+        );
+      }
     } else {
-      return result_controller(
-        "ERROR, medical statement or patient data not found",
-        null
-      );
+      return result_controller("ERROR, patient data not found", null);
     }
   } catch (error) {
     console.error(error);

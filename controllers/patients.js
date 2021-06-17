@@ -54,7 +54,7 @@ const getPatientById = async (id) => {
       //if data found
       return result_controller("OK", patientData);
     } else {
-      return result_controller("ERROR user not found", patientData);
+      return result_controller("ERROR user not found", null);
     }
   } catch (error) {
     console.error(error);

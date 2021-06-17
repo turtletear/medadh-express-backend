@@ -42,18 +42,17 @@ router.get("/:doctorId", async (req, res) => {
 });
 
 //post method
-router.post("/", async (req, res) => {
-  const newData = req.body;
-  const data = await createDoctor(newData);
-  const stat = data.status == "OK" ? 200 : 500;
+// router.post("/", async (req, res) => {
+//   const newData = req.body;
+//   const data = await createDoctor(newData);
+//   const stat = data.status == "OK" ? 200 : 500;
 
-  return response_generator(stat, data, res);
-});
+//   return response_generator(stat, data, res);
+// });
 
 router.post("/confirmPatient/:doctorId/:patientId", async (req, res) => {
   const doctorId = req.params.doctorId;
   const patientId = req.params.patientId;
-
   const data = await confirmRequest(doctorId, patientId);
   const stat = data.status == "OK" ? 200 : 500;
 
@@ -64,7 +63,6 @@ router.post("/confirmPatient/:doctorId/:patientId", async (req, res) => {
 router.put("/:doctorId", async (req, res) => {
   let updatedData = req.body;
   let doctorId = req.params.doctorId;
-
   const data = await updateDoctorById(doctorId, updatedData);
   const stat = data.status == "OK" ? 200 : 500;
 
@@ -74,7 +72,6 @@ router.put("/:doctorId", async (req, res) => {
 router.put("/removePatient/:doctorId/:patientId", async (req, res) => {
   const doctorId = req.params.doctorId;
   const patientId = req.params.patientId;
-
   const data = await unBoundDoctorFromPatient(doctorId, patientId);
   const stat = data.status == "OK" ? 200 : 500;
 
@@ -84,7 +81,6 @@ router.put("/removePatient/:doctorId/:patientId", async (req, res) => {
 //delete method
 router.delete("/:doctorId", async (req, res) => {
   let doctorId = req.params.doctorId;
-
   const data = await deleteDoctorById(doctorId);
   const stat = data.status == "OK" ? 200 : 500;
 
