@@ -21,7 +21,7 @@ const getReportById = async (id) => {
     if (reportData) {
       return result_controller("OK", reportData);
     } else {
-      return result_controller("ERROR Data not found", reportData);
+      return result_controller("ERROR Data not found", null);
     }
   } catch (error) {
     console.error(error.message);
@@ -31,20 +31,44 @@ const getReportById = async (id) => {
 
 const getReportByPatientId = async (patientId) => {
   try {
+    let checkPatient = await getPatientById(patientId);
+    if (checkPatient.data != null) {
+      let reportData = await Patients.findById(patientId).populate({
+        path: "extension.diagnosticReport",
+        model: "DiagnosticReport",
+      });
+      return result_controller("OK", reportData.extension.diagnosticReport);
+    } else {
+      return result_controller("ERROR patient not found", null);
+    }
   } catch (error) {
     console.error(error.message);
+    return result_controller("ERROR", null);
   }
 };
 
-// const getSingleReportByPatientId = async (patientId) => {
-//   try {
-
-//     const reportData = await DiagReports.findById(id).exec();
-//     if (reportData.)
-//   } catch (error) {
-//     console.error(error.message);
-//   }
-// };
+const getSingleReportByPatientId = async (patientId, reportId) => {
+  try {
+    let checkPatient = await getPatientById(patientId);
+    if (checkPatient.data != null) {
+      let reportData = await Patients.findById(patientId).populate({
+        path: "extension.diagnosticReport",
+        model: "DiagnosticReport",
+        match: { _id: reportId },
+      });
+      if (reportData.extension.diagnosticReport.length != 0) {
+        return result_controller("OK", reportData.extension.diagnosticReport);
+      } else {
+        return result_controller("ERROR report not found", null);
+      }
+    } else {
+      return result_controller("ERROR patient not found", null);
+    }
+  } catch (error) {
+    console.error(error.message);
+    return result_controller("ERROR", null);
+  }
+};
 
 const updatePatientReport = async (patientId, reportId) => {
   try {
@@ -143,6 +167,8 @@ const deleteReportById = async (patientId, reportId) => {
 module.exports = {
   getAllReport,
   getReportById,
+  getReportByPatientId,
+  getSingleReportByPatientId,
   createReport,
   updateReportById,
   deleteReportById,

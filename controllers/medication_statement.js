@@ -29,6 +29,50 @@ const getMedStateById = async (id) => {
   }
 };
 
+const getMedStateByPatientId = async (patientId) => {
+  try {
+    let checkPatient = await getPatientById(patientId);
+    if (checkPatient.data != null) {
+      let medStateData = await Patients.findById(patientId).populate({
+        path: "extension.medicationStatment",
+        model: "MedicationStatement",
+      });
+      return result_controller("OK", medStateData.extension.medicationStatment);
+    } else {
+      return result_controller("ERROR patient not found", null);
+    }
+  } catch (error) {
+    console.error(error.message);
+    return result_controller("ERROR", null);
+  }
+};
+
+const getSingleMedStateByPatientId = async (patientId, medStateId) => {
+  try {
+    let checkPatient = await getPatientById(patientId);
+    if (checkPatient.data != null) {
+      let medStateData = await Patients.findById(patientId).populate({
+        path: "extension.medicationStatment",
+        model: "MedicationStatement",
+        match: { _id: medStateId },
+      });
+      if (medStateData.extension.medicationStatment.length != 0) {
+        return result_controller(
+          "OK",
+          medStateData.extension.medicationStatment
+        );
+      } else {
+        return result_controller("ERROR medical statement not found", null);
+      }
+    } else {
+      return result_controller("ERROR patient not found", null);
+    }
+  } catch (error) {
+    console.error(error.message);
+    return result_controller("ERROR", null);
+  }
+};
+
 const updatePatientMedState = async (patientId, medStateId) => {
   try {
     const result = await Patients.findByIdAndUpdate(
@@ -125,6 +169,8 @@ const deleteMedStateById = async (patientId, medStateId) => {
 module.exports = {
   getAllMedState,
   getMedStateById,
+  getMedStateByPatientId,
+  getSingleMedStateByPatientId,
   createMedState,
   updateMedStateById,
   deleteMedStateById,

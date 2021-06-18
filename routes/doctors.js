@@ -15,12 +15,27 @@ const {
 } = require("../controllers/doctors");
 
 const {
+  getPatientByUsername,
+  getPatientById,
+} = require("../controllers/patients");
+
+const {
   confirmRequest,
   unBoundDoctorFromPatient,
 } = require("../controllers/connectPatientDoctor");
 
+const {
+  getReportByPatientId,
+  getSingleReportByPatientId,
+} = require("../controllers/diagnostic_report");
+
+const {
+  getMedStateByPatientId,
+  getSingleMedStateByPatientId,
+} = require("../controllers/medication_statement");
+
 const { response_generator } = require("../middleware");
-//get method
+//GET METHOD
 router.get("/", async (req, res) => {
   const data = await getAllDoctors();
   const stat = data.status == "OK" ? 200 : 500;
@@ -37,6 +52,22 @@ router.get("/username/:username", async (req, res) => {
 router.get("/:doctorId", async (req, res) => {
   let doctorId = req.params.doctorId;
   const data = await getDoctorById(doctorId);
+  const stat = data.status == "OK" ? 200 : 500;
+  return response_generator(stat, data, res);
+});
+
+//get patient
+router.get("/patient/username/:username", async (req, res) => {
+  let username = req.params.username;
+  const data = await getPatientByUsername(username);
+  const stat = data.status == "OK" ? 200 : 500;
+  return response_generator(stat, data, res);
+});
+
+router.get("/patient/:patientId", async (req, res) => {
+  let patientId = req.params.patientId;
+  //console.log(id)
+  const data = await getPatientById(patientId);
   const stat = data.status == "OK" ? 200 : 500;
   return response_generator(stat, data, res);
 });
@@ -86,5 +117,43 @@ router.delete("/:doctorId", async (req, res) => {
 
   return response_generator(stat, data, res);
 });
+
+//REPORT ROUTE
+router.get("/patient/reports/:patientId", async (req, res) => {
+  let patientId = req.params.patientId;
+  const data = await getReportByPatientId(patientId);
+  const stat = data.status == "OK" ? 200 : 500;
+
+  return response_generator(stat, data, res);
+});
+
+router.get("/patient/reports/:patientId/:reportId", async (req, res) => {
+  let patientId = req.params.patientId;
+  let reportId = req.params.reportId;
+  const data = await getSingleReportByPatientId(patientId, reportId);
+  const stat = data.status == "OK" ? 200 : 500;
+  return response_generator(stat, data, res);
+});
+
+//MEDSTATE ROUTE
+router.get("/patient/medicationState/:patientId", async (req, res) => {
+  let patientId = req.params.patientId;
+  const data = await getMedStateByPatientId(patientId);
+  const stat = data.status == "OK" ? 200 : 500;
+
+  return response_generator(stat, data, res);
+});
+
+router.get(
+  "/patient/medicationState/:patientId/:medStateId",
+  async (req, res) => {
+    let patientId = req.params.patientId;
+    let medStateId = req.params.medStateId;
+    const data = await getSingleMedStateByPatientId(patientId, medStateId);
+    const stat = data.status == "OK" ? 200 : 500;
+
+    return response_generator(stat, data, res);
+  }
+);
 
 module.exports = router;
