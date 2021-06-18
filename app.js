@@ -51,8 +51,8 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/", indexRouter);
 app.use("/patients", patientJWTAuth, patientsRouter);
 app.use("/doctors", doctorJWTAuth, doctorsRouter);
-app.use("/reports", reportRouter);
-app.use("/medicationState", medicationState);
+// app.use("/reports", reportRouter);
+// app.use("/medicationState", medicationState);
 app.use("/auth", authRouter);
 
 // catch 404 and forward to error handler
