@@ -62,6 +62,20 @@ const getPatientById = async (id) => {
   }
 };
 
+const getDoctorByPatientId = async (id) => {
+  try {
+    const patientData = await Patient.findById(id).populate({
+      path: "generalPractitioner",
+      model: "Doctors",
+    });
+    if (patientData.generalPractitioner.length != 0)
+      return result_controller("OK", patientData.generalPractitioner);
+    else return result_controller("Error, data not found", null);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 const createPatient = async (newData) => {
   try {
     let uname = newData.extension.username;
@@ -121,6 +135,7 @@ module.exports = {
   getAllPatients,
   createPatient,
   getPatientByUsername,
+  getDoctorByPatientId,
   getPatientById,
   updatePatientById,
   deletePatientById,

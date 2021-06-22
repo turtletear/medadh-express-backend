@@ -9,6 +9,7 @@ const {
   getAllPatients,
   createPatient,
   getPatientByUsername,
+  getDoctorByPatientId,
   getPatientById,
   updatePatientById,
   deletePatientById,
@@ -39,7 +40,8 @@ const {
 } = require("../controllers/medication_statement");
 
 const { response_generator } = require("../middleware");
-//get method
+
+//GET METHOD
 router.get("/", async (req, res) => {
   const data = await getAllPatients();
   const stat = data.status == "OK" ? 200 : 500;
@@ -55,7 +57,6 @@ router.get("/username/:username", async (req, res) => {
 
 router.get("/:patientId", async (req, res) => {
   let patientId = req.params.patientId;
-  //console.log(id)
   const data = await getPatientById(patientId);
   const stat = data.status == "OK" ? 200 : 500;
   return response_generator(stat, data, res);
@@ -72,6 +73,14 @@ router.get("/doctor/username/:username", async (req, res) => {
 router.get("/doctor/:doctorId", async (req, res) => {
   let doctorId = req.params.doctorId;
   const data = await getDoctorById(doctorId);
+  const stat = data.status == "OK" ? 200 : 500;
+  return response_generator(stat, data, res);
+});
+
+router.get("/doctor/search/:patientId", async (req, res) => {
+  let patientId = req.params.patientId;
+
+  const data = await getDoctorByPatientId(patientId);
   const stat = data.status == "OK" ? 200 : 500;
   return response_generator(stat, data, res);
 });

@@ -27,7 +27,7 @@ router.post("/login/patients", async (req, res) => {
 
 router.post("/regis/patients", async (req, res) => {
   let data = req.body;
-  console.log("data created: ", data);
+
   const response = await signupPatient(data);
   const stat = response.status == "OK" ? 200 : 500;
 
@@ -52,7 +52,7 @@ router.post("/login/doctors", async (req, res) => {
 
 router.post("/regis/doctors", async (req, res) => {
   let data = req.body;
-  console.log("data created: ", data);
+
   const response = await signupDoctor(data);
   const stat = response.status == "OK" ? 200 : 500;
 
