@@ -91,6 +91,33 @@ const DiagnosticReportSchema = new Schema(
           type: Number,
         },
       },
+      trombosit: {
+        display: {
+          type: String,
+          default: "Trombosit",
+        },
+        value: {
+          type: Number,
+        },
+      },
+      hematokrit: {
+        display: {
+          type: String,
+          default: "Hematokrit",
+        },
+        value: {
+          type: Number,
+        },
+      },
+      eritrosit: {
+        display: {
+          type: String,
+          default: "Eritrosit",
+        },
+        value: {
+          type: Number,
+        },
+      },
       note: {
         type: String,
       },

@@ -40,8 +40,7 @@ const {
 } = require("../controllers/medication_statement");
 
 const { response_generator } = require("../middleware");
-
-//GET METHOD
+//get method
 router.get("/", async (req, res) => {
   const data = await getAllPatients();
   const stat = data.status == "OK" ? 200 : 500;
@@ -57,6 +56,7 @@ router.get("/username/:username", async (req, res) => {
 
 router.get("/:patientId", async (req, res) => {
   let patientId = req.params.patientId;
+  //console.log(id)
   const data = await getPatientById(patientId);
   const stat = data.status == "OK" ? 200 : 500;
   return response_generator(stat, data, res);

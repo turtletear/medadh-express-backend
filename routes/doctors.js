@@ -10,6 +10,7 @@ const {
   createDoctor,
   getDoctorByUsername,
   getDoctorById,
+  getAllBoundPatients,
   updateDoctorById,
   deleteDoctorById,
 } = require("../controllers/doctors");
@@ -68,6 +69,13 @@ router.get("/patient/:patientId", async (req, res) => {
   let patientId = req.params.patientId;
   //console.log(id)
   const data = await getPatientById(patientId);
+  const stat = data.status == "OK" ? 200 : 500;
+  return response_generator(stat, data, res);
+});
+
+router.get("/patients/bound/:doctorId", async (req, res) => {
+  let doctorId = req.params.doctorId;
+  const data = await getAllBoundPatients(doctorId);
   const stat = data.status == "OK" ? 200 : 500;
   return response_generator(stat, data, res);
 });
